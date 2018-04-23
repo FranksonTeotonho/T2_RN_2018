@@ -36,6 +36,54 @@ rbf <- function(X, Y, K=10, gama=1.0) {
   return(list(pesos=w, centros=mus, gama=gama)) # retorna o modelo RBF
 }
 
+rbf.preditos <- function(dados){
+  classesPreditas <- c()
+  
+  for(i in 1:nrow(dados)){
+    classe <- maxPosicaoVetor(dados[i,])
+    classesPreditas <- c(classesPreditas, classe)
+  }
+  
+  return (classesPreditas)
+  
+}
+
+rbf.crossValidation <- function(datasets, K=10, gama=1.0){
+  
+  rbf <- list()
+  acc <- list()
+  m <- list()
+  accMedia <- 0
+  
+  for(i in 1:length(datasets)){
+    
+    cat("Fold: ", i, "\n")
+    
+    X <- datasets[[i]]$treinamento[ ,1:4]
+    Y <- datasets[[i]]$treinamento[ ,5:7]
+    X.out <- datasets[[i]]$teste[ ,1:4]
+    Y.out <- datasets[[i]]$teste[ ,5:7]
+    
+    modelo <- rbf(X,Y, K, gama)
+    
+    pred <- rbf.predict(modelo, X.out, classification = TRUE)
+    
+    reais <- reais(datasets[[i]]$teste)
+    preditos <- rbf.preditos(pred)
+    
+    acc[[i]] <- acuracia(reais, preditos)
+    accMedia <- accMedia + acuracia(reais, preditos)
+    m[[i]] <- matriz.confusao(reais, preditos)
+  }
+  
+  rbf$accMedia <- accMedia/length(datasets)
+  rbf$acc <- acc
+  rbf$matrizes <- m 
+  
+  return(rbf)
+  
+}
+
 rbf.predict <- function(modelo, X, classification=FALSE) {
   
   gama <- modelo$gama
