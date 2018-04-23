@@ -39,11 +39,29 @@ mlp.predicoes <- function(arq, dados){
   
 }
 
-mlp.crossValidation <- function(arq, datasets){
+mlp.crossValidation <- function(arq, datasets, n, limiar){
   
+  mlp <- list()
+  m <- list()
+  acc <- 0
   
+  for(i in 1:length(datasets)){
+    cat("fold: ", i ,"\n")
+    modelo <- mlp.retropropagacao(arq, datasets[[i]]$treinamento,n, limiar)
+    
+    reais <- reais(datasets[[i]]$teste)
+    preditos <- mlp.predicoes(modelo$arq, datasets[[i]]$teste)
+    
+    acc <- acc + acuracia(reais, preditos)
+    m[[i]] <- matriz.confusao(reais, preditos) 
+    arq <- modelo$arq
+  }
   
+  mlp$arq <- arq
+  mlp$acc <- acc/length(datasets)
+  mlp$matrizes <- m 
   
+  return(mlp)
 }
 
 # Cria a arquitetura da MLP

@@ -124,14 +124,19 @@ k.fold.crossover <- function(k, dados){
     train_test <- list()
     
     aux_teste <- holder[i]
-    n_linhas_teste <- nrow(dados)/k 
+    n_linhas <- nrow(dados)/k 
     
-    train_test$teste <- matrix(unlist(aux_teste), nrow = n_linhas_teste, ncol = ncol(dados))
+    train_test$teste <- matrix(unlist(aux_teste), nrow = n_linhas, ncol = ncol(dados))
+    
     
     aux_treinamento <- holder[-i]
-    n_linhas_treinamento <- nrow(dados) - n_linhas_teste 
+    mTreinamento <- matrix(unlist(aux_treinamento[1]), nrow = n_linhas, ncol = ncol(dados))
+    for(j in 2:k-1){
+      m <- matrix(unlist(aux_treinamento[j]), nrow = n_linhas, ncol = ncol(dados))
+      mTreinamento <- rbind(mTreinamento, m)
+    }
+    train_test$treinamento <- mTreinamento
     
-    train_test$treinamento <- matrix(unlist(aux_treinamento), nrow = n_linhas_treinamento, ncol = ncol(dados))
     
     datasets[[i]] <- train_test
   }
