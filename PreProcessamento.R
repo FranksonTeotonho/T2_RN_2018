@@ -66,6 +66,19 @@ matriz.confusao <- function(reais, preditos){
   return (matriz)
 }
 
+acuracia <- function(reais, preditos){
+  
+  cont <- 0
+  acc <- 0
+  for(i in 1:length(reais)){
+    if(reais[i] == preditos[i]){cont <- cont + 1}
+  }
+  
+  acc <- cont/length(reais)
+  
+  return(acc)
+}
+
 #retorna a posição maxima de um vetor qualquer
 maxPosicaoVetor <- function(vetor){
   
@@ -98,24 +111,30 @@ reais <- function(dados){
 
 k.fold.crossover <- function(k, dados){
   
-  kfold <- list()
-  grupos <- c()
+  datasets <- list()
+  fold <- c()
   
   for (i in 1:k) {
-    grupos <- c(grupos, i)  
+    fold <- c(fold, i)  
   }
   
-  holder <- split(dados, grupos)
+  holder <- split(dados, fold)
   
   for(i in 1:k){
-    n <- list()
+    train_test <- list()
     
-    n$teste <- holder[i]
-    n$treinamento <- holder[-i]
+    aux_teste <- holder[i]
+    n_linhas_teste <- nrow(dados)/k 
     
-    cat(i)
-    kfold[[i]] <- n
+    train_test$teste <- matrix(unlist(aux_teste), nrow = n_linhas_teste, ncol = ncol(dados))
+    
+    aux_treinamento <- holder[-i]
+    n_linhas_treinamento <- nrow(dados) - n_linhas_teste 
+    
+    train_test$treinamento <- matrix(unlist(aux_treinamento), nrow = n_linhas_treinamento, ncol = ncol(dados))
+    
+    datasets[[i]] <- train_test
   }
-  return (kfold)
+  return (datasets)
   
 }

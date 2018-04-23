@@ -10,6 +10,8 @@
 # Aluno: Eduardo Yamauchi RA:619485 #
 ##########################################################
 
+source("PreProcessamento.R")
+
 # Funcao de ativacao
 funcao.ativacao <- function(v){
   y <- 1 / (1 + exp(-v))
@@ -37,7 +39,12 @@ mlp.predicoes <- function(arq, dados){
   
 }
 
-
+mlp.crossValidation <- function(arq, datasets){
+  
+  
+  
+  
+}
 
 # Cria a arquitetura da MLP
 arquitetura <- function(num.entrada, num.escondida, num.saida,
