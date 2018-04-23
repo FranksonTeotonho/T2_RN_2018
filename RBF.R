@@ -1,4 +1,5 @@
 library(corpcor)
+source("PreProcessamento.R")
 
 rbf <- function(X, Y, K=10, gama=1.0) {
   N <- dim(X)[1] # numero de observacoes
@@ -42,21 +43,34 @@ rbf.predict <- function(modelo, X, classification=FALSE) {
   w <- modelo$pesos
   N <- dim(X)[1] # numero de observacoes
   
-  pred <- rep(w[1],N)
-  # inicia com o peso do bias ja que a entrada associada eh 1
+  pred <- matrix(data = c(rep(w[1,1],N),rep(w[1,2],N),rep(w[1,3],N)), nrow = N, ncol = 3)
+  # inicia com o peso do bias ja que a entrada associada eh 1  
+  
+  
   for (j in 1:N) {
     # Predicao para o ponto xj
     for (k in 1:length(centros[,1])) {
       # o peso para o centro[k] é dado por w[k+1] porque w[1] eh o bias
-      pred[j] <- pred[j] + w[k+1] * exp( (-1/(2*gama*gama)) *
-                                           sum((X[j,]-centros[k,])*(X[j,]-centros[k,])) )
+      
+      for(c in 1:3){
+        pred[j,c] <- pred[j,c] + w[k+1,c] * exp( (-1/(2*gama*gama)) *
+                                             sum((X[j,]-centros[k,])*(X[j,]-centros[k,])) )
+      }
       #pred[j]<-pred[j]+w[k+1]*exp(-gama*sum((X[j,]-centros[k,])*(X[j,]-centros[k,])))
       #pred[j]<-pred[j]+w[k+1]*exp(-gama*norm(as.matrix(X[j,]-centros[k,]),"F")^2)
     }
   }
   # Se for classificacao, aplica a funcao sinal em cada pred
   if (classification) {
-    pred <- unlist(lapply(pred, sign))
+    for(i in 1:N){
+      if(maxPosicaoVetor(pred[i,]) == 1){
+        pred[i,] <- c(1,0,0)
+      }else if (maxPosicaoVetor(pred[i,]) == 2){
+        pred[i,] <- c(0,1,0)
+      }else{
+        pred[i,] <- c(0,0,1)
+      }
+    }
   }
   return(pred)
 }
