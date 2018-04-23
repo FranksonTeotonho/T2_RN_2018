@@ -38,12 +38,13 @@ mlp.predicoes <- function(arq, dados){
   return(classesPreditas)
   
 }
-
+#Usa o dataset configurando com o conceito de crossValidation para treinar o modelo
 mlp.crossValidation <- function(arq, datasets, n, limiar){
   
   mlp <- list()
   m <- list()
-  acc <- 0
+  acc <- list()
+  accMedia <- 0
   
   for(i in 1:length(datasets)){
     cat("fold: ", i ,"\n")
@@ -52,13 +53,15 @@ mlp.crossValidation <- function(arq, datasets, n, limiar){
     reais <- reais(datasets[[i]]$teste)
     preditos <- mlp.predicoes(modelo$arq, datasets[[i]]$teste)
     
-    acc <- acc + acuracia(reais, preditos)
+    acc[[i]] <- acuracia(reais, preditos)
+    accMedia <- accMedia + acuracia(reais, preditos)
     m[[i]] <- matriz.confusao(reais, preditos) 
     arq <- modelo$arq
   }
   
   mlp$arq <- arq
-  mlp$acc <- acc/length(datasets)
+  mlp$accMedia <- accMedia/length(datasets)
+  mlp$acc <- acc
   mlp$matrizes <- m 
   
   return(mlp)
@@ -202,6 +205,6 @@ mlp.retropropagacao <- function(arq, dados, n, limiar){
 }
 # Chamadas para execucao
 #dados <- dados.processados()
+#dadosCV <- k.fold.crossValidation(k, dados)
 #arq <- arquitetura(4,4,3,funcao.ativacao, der.funcao.ativacao)
-#modelo <- mlp.retropropagacao(arq,dados,0.1,1.315e-2) #Tempo razoavel
-#mlp.propagacao(modelo$arq,c(0,1))
+#modeloCV <- mlp.crossValidation(arq,dadosCV,0.1,2e-2) #Tempo razoavel

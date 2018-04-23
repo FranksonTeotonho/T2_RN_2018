@@ -65,7 +65,7 @@ matriz.confusao <- function(reais, preditos){
   
   return (matriz)
 }
-
+#Medida de avaliação
 acuracia <- function(reais, preditos){
   
   cont <- 0
@@ -95,8 +95,8 @@ maxPosicaoVetor <- function(vetor){
   return (pos)
   
 }
-#Transforma o vetor de 3 algarismos e um numero conrrespondente a classe
 
+#Transforma o vetor de 3 algarismos e um numero conrrespondente a classe
 reais <- function(dados){
   
   classesReais <- c()
@@ -108,8 +108,8 @@ reais <- function(dados){
   
   return (classesReais)
 }
-
-k.fold.crossover <- function(k, dados){
+#Faz um dataset seguindo o conceito de crossValidation
+k.fold.crossValidation <- function(k, dados){
   
   datasets <- list()
   fold <- c()
