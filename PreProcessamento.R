@@ -1,7 +1,7 @@
 #Transformação de classes nominais para vetores com 3 algarismo
 #Normalização
 #Randomizar
-dados.processados <- function(){
+dados.processados <- function(classesVetorizadas = TRUE){
   #Classes nominais para numericas
   dados <- iris[1:4]
   classes <- factor(iris$Species,
@@ -9,21 +9,25 @@ dados.processados <- function(){
                          labels = c(1, 2, 3))
   
   
-  for(i in 1:length(classes)){
-    
-    if(classes[i] == 1){
-      dados$Species1[i] <- 1
-      dados$Species2[i] <- 0
-      dados$Species3[i] <- 0
-    }else if (classes[i] == 2){
-      dados$Species1[i] <- 0
-      dados$Species2[i] <- 1
-      dados$Species3[i] <- 0
-    }else{
-      dados$Species1[i] <- 0
-      dados$Species2[i] <- 0
-      dados$Species3[i] <- 1
+  if(classesVetorizadas == TRUE){
+    for(i in 1:length(classes)){
+      
+      if(classes[i] == 1){
+        dados$Species1[i] <- 1
+        dados$Species2[i] <- 0
+        dados$Species3[i] <- 0
+      }else if (classes[i] == 2){
+        dados$Species1[i] <- 0
+        dados$Species2[i] <- 1
+        dados$Species3[i] <- 0
+      }else{
+        dados$Species1[i] <- 0
+        dados$Species2[i] <- 0
+        dados$Species3[i] <- 1
+      }
     }
+  }else{
+    dados$Species <- classes
   }
 
   #Normalizando os atributos
@@ -97,14 +101,22 @@ maxPosicaoVetor <- function(vetor){
 }
 
 #Transforma o vetor de 3 algarismos e um numero conrrespondente a classe
-reais <- function(dados){
+reais <- function(dados, classesVetorizadas = TRUE){
   
   classesReais <- c()
   
-  for(i in 1:nrow(dados)){
-    classe <- maxPosicaoVetor(dados[i,5:7])
-    classesReais <- c(classesReais, classe)
+  if(classesVetorizadas == TRUE){
+    for(i in 1:nrow(dados)){
+      classe <- maxPosicaoVetor(dados[i,5:7])
+      classesReais <- c(classesReais, classe)
+    }  
+  }else{
+    for(i in 1:nrow(dados)){
+      classe <- dados[i,5]
+      classesReais <- c(classesReais, classe)
+    }  
   }
+  
   
   return (classesReais)
 }
